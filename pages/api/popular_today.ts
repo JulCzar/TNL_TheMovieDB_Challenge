@@ -27,28 +27,15 @@ interface APIResponse {
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { page } = req.query
 
+  const axiosConfig = { params: { page } }
+
   try {
-    const axiosConfig = { params: { page } }
     const { data } = await api.get<APIResponse>('/tv/popular', axiosConfig)
-
-    const { page: currentPage, results, total_pages: pages } = data
-
-    const parsedResults = results.map(
-      ({ id, name, genre_ids, popularity }) => ({
-        id,
-        name,
-        genre_ids,
-        popularity,
-      })
-    )
-
-    res.json({
-      currentPage,
-      pages,
-      movies: parsedResults,
-    })
+    
+    res.json(data)
   } catch (e) {
     console.trace(e)
+
     res.json({
       status: 'Error',
     })
