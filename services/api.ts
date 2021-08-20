@@ -3,7 +3,10 @@ import axios from 'axios'
 export const api = axios.create({
   baseURL: 'https://api.themoviedb.org/3',
   timeout: 5000,
+  headers: {
+    'Cache-Control': 's-maxage=10, stale-while-revalidate',
+  },
   params: {
-    api_key: process.env.API_KEY
-  }
+    api_key: process.env.API_KEY,
+  },
 })

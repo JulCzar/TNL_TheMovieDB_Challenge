@@ -1,20 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { api } from '../../services/api'
-
-type Genre = {
-  id: number,
-  name: string
-}
-
-type APIResponse = {
-  genres: Genre[]
-}
+import { api } from '../../../../../services/api'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    const { data } = await api.get<APIResponse>('/genre/tv/list')
+  const { movieId, season } = req.query
 
-    res.json(data.genres)
+  try {
+    const { data } = await api.get(`/tv/${movieId}/season/${season}`)
+
+    res.json(data)
   } catch (e) {
     console.trace(e)
     res.json({
