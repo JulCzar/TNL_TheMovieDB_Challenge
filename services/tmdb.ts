@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const api = axios.create({
+export const tmdb = axios.create({
   baseURL: 'https://api.themoviedb.org/3',
   timeout: 5000,
   headers: {
@@ -8,5 +8,6 @@ export const api = axios.create({
   },
   params: {
     api_key: process.env.API_KEY,
+    language: 'pt-BR',
   },
 })

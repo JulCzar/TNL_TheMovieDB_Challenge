@@ -1,42 +1,69 @@
 import { Box, Flex, Text } from '@chakra-ui/layout'
+import NextLink from 'next/link'
 import { Image } from '@chakra-ui/react'
 import React from 'react'
 import { GiTomato } from 'react-icons/gi'
 import { SerieInfo } from '../models'
 
 interface SerieCardProps {
-  serie: SerieInfo,
+  serie: SerieInfo
   genres: string[]
 }
 
+const accessibleSelection = {
+  cursor: 'pointer',
+  shadow: '2xl',
+  transform: 'scale(1.01)',
+}
+
 const SerieCard: React.FC<SerieCardProps> = ({ serie, genres }) => (
-  <Box borderRadius='md' position='relative' overflow='hidden'>
-    <Image
-      src={`https://www.themoviedb.org/t/p/w220_and_h330_face/${serie.poster_path}`}
-      loading='lazy'
-      width='3xs'
-      alt=''
-    />
-    <Box position='absolute' bottom={0} background='#fffb' width='100%' p={5}>
-      <Flex>
-        <Text>
-          {serie.origin_country},{' '}
-          <Text as='span' fontWeight='bold' color='yellow.400'>
-            {new Date(serie.first_air_date).getFullYear()}
+  <NextLink href={`/serie/${serie.id}`}>
+    <Box
+      shadow='md'
+      tabIndex={0}
+      overflow='hidden'
+      borderRadius='md'
+      transition='300ms'
+      position='relative'
+      _focus={accessibleSelection}
+      _hover={accessibleSelection}>
+      <Image
+        src={`https://www.themoviedb.org/t/p/w220_and_h330_face/${serie.poster_path}`}
+        loading='lazy'
+        width='3xs'
+        alt=''
+      />
+      <Box
+        p={4}
+        h={140}
+        bottom={0}
+        width='100%'
+        position='absolute'
+        backgroundSize='cover'
+        backgroundPosition='bottom'
+        backgroundRepeat='no-repeat'
+        backdropFilter='blur(10px) brightness(0.8)'
+        bgGradient='linear(to-b, transparent, #fff8)'>
+        <Flex>
+          <Text>
+            {serie.origin_country},{' '}
+            <Text as='span' fontWeight='bold' color='yellow.400'>
+              {new Date(serie.first_air_date).getFullYear()}
+            </Text>
           </Text>
+        </Flex>
+        <Text fontSize='xl' fontWeight='900' noOfLines={1}>
+          {serie.name}
         </Text>
-      </Flex>
-      <Text fontSize='xl' fontWeight='900'>
-        {serie.name}
-      </Text>
-      <Flex>
-        <GiTomato color='#e30c0d' size={20} /> {serie.vote_average*10}%
-      </Flex>
-      <Box overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
-        {genres.filter(i => i !== '').join(', ')}
+        <Flex>
+          <GiTomato color='#e30c0d' size={20} /> {serie.vote_average * 10}%
+        </Flex>
+        <Box overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+          {genres.filter(i => i !== '').join(', ')}
+        </Box>
       </Box>
     </Box>
-  </Box>
+  </NextLink>
 )
 
 export default SerieCard

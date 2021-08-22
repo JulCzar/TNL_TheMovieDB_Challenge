@@ -1,11 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { api } from '../../../../../services/api'
+import type { SerieDetails } from '../../../models'
+import { tmdb } from '../../../services/tmdb'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { movieId, season } = req.query
+  const { serieId } = req.query
 
   try {
-    const { data } = await api.get(`/tv/${movieId}/season/${season}`)
+    const { data } = await tmdb.get<SerieDetails>(`/tv/${serieId}`)
 
     res.json(data)
   } catch (e) {

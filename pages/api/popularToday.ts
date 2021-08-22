@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { APISeriesResponse, SerieInfo } from '../../models'
-import { api } from '../../services/api'
+import type { APISeriesResponse } from '../../models'
+import { tmdb } from '../../services/tmdb'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { page } = req.query
@@ -8,7 +8,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const axiosConfig = { params: { page } }
 
   try {
-    const { data } = await api.get<APISeriesResponse>('/tv/popular', axiosConfig)
+    const { data } = await tmdb.get<APISeriesResponse>(
+      '/tv/popular',
+      axiosConfig
+    )
     
     res.json(data)
   } catch (e) {

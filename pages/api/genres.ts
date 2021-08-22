@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Genre } from '../../models'
-import { api } from '../../services/api'
+import { tmdb } from '../../services/tmdb'
 
 type APIResponse = {
   genres: Genre[]
@@ -8,7 +8,7 @@ type APIResponse = {
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { data } = await api.get<APIResponse>('/genre/tv/list')
+    const { data } = await tmdb.get<APIResponse>('/genre/tv/list')
 
     res.json(data.genres)
   } catch (e) {

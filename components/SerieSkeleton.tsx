@@ -8,7 +8,8 @@ const SerieSkeleton: React.FC = () => {
       <Box
         pos='absolute'
         bottom={0}
-        background='#fffc'
+        background='#0008'
+        bgGradient='linear(to-b, transparent 40%, #fff8)'
         zIndex={1}
         w='100%'
         p={4}>
