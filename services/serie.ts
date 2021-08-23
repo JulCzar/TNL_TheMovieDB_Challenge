@@ -7,7 +7,7 @@ enum storeKey {
   watched = 'watched',
 }
 
-const getLikedSeries = () =>
+export const getLikedSeries = () =>
   persistentStorage.getItem<SerieDetails[]>(storeKey.liked) || []
 
 export const likeSerie = (serie: SerieDetails) => {
