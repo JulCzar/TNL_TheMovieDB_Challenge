@@ -37,7 +37,14 @@ import {
 import NextLink from 'next/link'
 import { FiHeart } from 'react-icons/fi'
 import { FaHeart } from 'react-icons/fa'
-import { likeSerie, serieIsLiked, unlikeSerie } from '../../services/serie'
+import {
+  episodeIsWatched,
+  likeSerie,
+  markEpisodeAsWatched,
+  removeEpisodeFromWatchedList,
+  serieIsLiked,
+  unlikeSerie,
+} from '../../services/serie'
 
 const Movie: NextPage = props => {
   const route = useRouter()
@@ -81,6 +88,16 @@ const Movie: NextPage = props => {
     } else {
       likeSerie(data)
       setLiked(true)
+    }
+  }
+
+  function toggleEpisodeWatched(episode: Episode) {
+    return () => {
+      if (!data) return
+
+      if (episodeIsWatched(data, episode))
+        removeEpisodeFromWatchedList(data, episode)
+      else markEpisodeAsWatched(data, episode)
     }
   }
 
@@ -167,7 +184,13 @@ const Movie: NextPage = props => {
                           <EpisodeSkeleton key={`${pre}-${i}-${season.name}`} />
                         ))
                     : seasons[season.id].map(ep => (
-                        <EpisodeItem episode={ep} key={ep.id} />
+                        <EpisodeItem
+                          episode={ep}
+                          key={ep.id}
+                          checked={episodeIsWatched(data, ep)}
+                          onChange={toggleEpisodeWatched(ep)}
+                          defaultChecked={episodeIsWatched(data, ep)}
+                        />
                       ))}
                 </AccordionPanel>
               </AccordionItem>
