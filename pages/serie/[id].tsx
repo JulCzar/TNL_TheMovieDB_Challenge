@@ -1,4 +1,9 @@
-import { Episode, EpisodeRequest, Season, SerieDetails } from '../../models'
+import type {
+  Episode,
+  EpisodeRequest,
+  Season,
+  SerieDetails,
+} from '../../models'
 
 import {
   Accordion,
@@ -31,10 +36,20 @@ import {
 } from '../../components'
 import NextLink from 'next/link'
 import { FiHeart } from 'react-icons/fi'
+import { FaHeart } from 'react-icons/fa'
+import {
+  episodeIsWatched,
+  likeSerie,
+  markEpisodeAsWatched,
+  removeEpisodeFromWatchedList,
+  serieIsLiked,
+  unlikeSerie,
+} from '../../services/serie'
 
-const Movie: NextPage = () => {
+const Movie: NextPage = props => {
   const route = useRouter()
   const [data, setData] = useState<SerieDetails | null>(null)
+  const [isSerieLiked, setLiked] = useState(false)
   const [seasons, setSeason] = useState<{ [x: string]: Episode[] }>({})
   const { id } = route.query
 
@@ -46,6 +61,14 @@ const Movie: NextPage = () => {
       .then(({ data }) => setData(data))
   }, [id])
 
+  useEffect(() => {
+    if (!data) return
+
+    const isSerieLiked = serieIsLiked(data)
+
+    setLiked(isSerieLiked)
+  }, [data])
+
   async function loadSeasonEpisodes(season: Season) {
     if (!!seasons[season.id]) return
 
@@ -54,6 +77,28 @@ const Movie: NextPage = () => {
       .then(({ data }) => {
         setSeason({ ...seasons, [season.id]: data.episodes })
       })
+  }
+
+  function toggleLikedSerie() {
+    if (!data) return
+
+    if (serieIsLiked(data)) {
+      unlikeSerie(data)
+      setLiked(false)
+    } else {
+      likeSerie(data)
+      setLiked(true)
+    }
+  }
+
+  function toggleEpisodeWatched(episode: Episode) {
+    return () => {
+      if (!data) return
+
+      if (episodeIsWatched(data, episode))
+        removeEpisodeFromWatchedList(data, episode)
+      else markEpisodeAsWatched(data, episode)
+    }
   }
 
   if (!data || ['error'].includes(data.status.toLowerCase()))
@@ -103,7 +148,14 @@ const Movie: NextPage = () => {
                   <IconButton
                     aria-label='favorite'
                     background='red.600'
-                    icon={<FiHeart color='white' />}
+                    onClick={toggleLikedSerie}
+                    icon={
+                      isSerieLiked ? (
+                        <FaHeart color='white' />
+                      ) : (
+                        <FiHeart color='white' />
+                      )
+                    }
                   />
                 </Box>
               </Flex>
@@ -132,7 +184,13 @@ const Movie: NextPage = () => {
                           <EpisodeSkeleton key={`${pre}-${i}-${season.name}`} />
                         ))
                     : seasons[season.id].map(ep => (
-                        <EpisodeItem episode={ep} key={ep.id} />
+                        <EpisodeItem
+                          episode={ep}
+                          key={ep.id}
+                          checked={episodeIsWatched(data, ep)}
+                          onChange={toggleEpisodeWatched(ep)}
+                          defaultChecked={episodeIsWatched(data, ep)}
+                        />
                       ))}
                 </AccordionPanel>
               </AccordionItem>
