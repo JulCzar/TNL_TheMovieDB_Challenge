@@ -14,7 +14,13 @@ import type { NextPage } from 'next'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import type { APISeriesResponse, Genre } from '../models'
-import { Header, Presentation, SerieCard, SerieSkeleton } from '../components'
+import {
+  Footer,
+  Header,
+  Presentation,
+  SerieCard,
+  SerieSkeleton,
+} from '../components'
 
 const Home: NextPage = () => {
   const [genres, setGenres] = useState<Genre[]>([])
@@ -77,6 +83,8 @@ const Home: NextPage = () => {
           </Wrap>
         </Box>
       </Container>
+
+      <Footer />
     </Container>
   )
 }

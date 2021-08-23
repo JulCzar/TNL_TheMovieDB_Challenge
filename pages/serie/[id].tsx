@@ -21,11 +21,15 @@ import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import { Header } from '../../components'
+import {
+  EpisodeItem,
+  EpisodeSkeleton,
+  Footer,
+  Header,
+  SerieDetailSkeleton,
+} from '../../components'
 import NextLink from 'next/link'
 import { FiHeart } from 'react-icons/fi'
-import EpisodeSkeleton from '../../components/EpisodeSkeleton'
-import EpisodeItem from '../../components/EpisodeItem'
 
 const Movie: NextPage = () => {
   const route = useRouter()
@@ -51,7 +55,8 @@ const Movie: NextPage = () => {
       })
   }
 
-  if (!data || ['error'].includes(data.status.toLowerCase())) return null
+  if (!data || ['error'].includes(data.status.toLowerCase()))
+    return <SerieDetailSkeleton />
 
   return (
     <Container maxW='none'>
@@ -104,7 +109,7 @@ const Movie: NextPage = () => {
         </Box>
         <Box>
           <Heading mt={10} mb={4} fontSize='2xl'>
-            Seasons
+            Temporadas
           </Heading>
           <Accordion allowMultiple>
             {data.seasons.map(season => (
@@ -132,6 +137,7 @@ const Movie: NextPage = () => {
           </Accordion>
         </Box>
       </Container>
+      <Footer />
     </Container>
   )
 }
