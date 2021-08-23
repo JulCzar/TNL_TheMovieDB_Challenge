@@ -1,18 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { Genre } from '../../models'
+import type { APISeriesResponse } from '../../models'
 import { tmdb } from '../../services/tmdb'
 
-type APIResponse = {
-  genres: Genre[]
-}
-
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    const { data } = await tmdb.get<APIResponse>('/genre/tv/list')
+  const { page } = req.query
 
-    res.json(data.genres)
+  const axiosConfig = { params: { page } }
+
+  try {
+    const { data } = await tmdb.get<APISeriesResponse>(
+      '/tv/popular',
+      axiosConfig
+    )
+    
+    res.json(data)
   } catch (e) {
     console.trace(e)
+
     res.json({
       status: 'Error',
     })
