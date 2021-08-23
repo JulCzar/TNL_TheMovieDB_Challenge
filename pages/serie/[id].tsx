@@ -14,6 +14,7 @@ import {
   IconButton,
   Image,
   Spacer,
+  Tag,
   Text,
 } from '@chakra-ui/react'
 import axios from 'axios'
@@ -84,12 +85,14 @@ const Movie: NextPage = () => {
                 <Divider my={6} />
                 <Text>Tags</Text>
                 <Text>
-                  {data.genres.map((genre, i) => (
+                  {data.genres.map(genre => (
                     <NextLink href={`/?genres=${[genre.id]}`} key={genre.id}>
-                      <a>
-                        {i > 0 && ', '}
+                      <Tag
+                        _hover={{ cursor: 'pointer' }}
+                        mr={2}
+                        colorScheme='yellow'>
                         {genre.name}
-                      </a>
+                      </Tag>
                     </NextLink>
                   ))}
                 </Text>

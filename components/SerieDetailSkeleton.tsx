@@ -3,7 +3,6 @@ import {
   Container,
   Divider,
   Flex,
-  Heading,
   IconButton,
   Skeleton,
   SkeletonText,
