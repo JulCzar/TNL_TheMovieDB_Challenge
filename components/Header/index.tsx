@@ -23,9 +23,9 @@ const Header: React.FC = () => {
         <Container maxW='container.xl'>
           <Flex>
             <Heading mr={[2, 20]} color='yellow.400'>
-              <Link passHref href='/'>
+              <Link passHref href='/home'>
                 <Heading as='a'>
-                  My Serie List
+                  myserielist
                   <Text color='white' as='span'>
                     .vercel
                   </Text>

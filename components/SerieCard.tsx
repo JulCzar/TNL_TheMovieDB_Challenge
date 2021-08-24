@@ -55,7 +55,7 @@ const SerieCard: React.FC<SerieCardProps> = ({ serie, genres }) => (
         <Text
           color='fontColor.600'
           fontSize='xl'
-          fontWeight='900'
+          fontWeight='extrabold'
           noOfLines={1}>
           {serie.name}
         </Text>
@@ -65,6 +65,7 @@ const SerieCard: React.FC<SerieCardProps> = ({ serie, genres }) => (
         <Box
           color='fontColor.400'
           overflow='hidden'
+          fontSize='smaller'
           textOverflow='ellipsis'
           whiteSpace='nowrap'>
           {genres.filter(i => i !== '').join(', ')}

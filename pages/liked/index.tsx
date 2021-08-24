@@ -3,10 +3,10 @@ import axios from 'axios'
 import React, { useState } from 'react'
 import { useEffect } from 'react'
 import { FaHeart } from 'react-icons/fa'
-import { SerieCard, SerieSkeleton } from '../components'
-import { Genre, SerieInfo } from '../models'
-import { getLikedSeries } from '../services/serie'
-import Template from '../styles/template'
+import { SerieCard, SerieSkeleton } from '../../components'
+import { Genre, SerieInfo } from '../../models'
+import { getLikedSeries } from '../../services/serie'
+import Template from '../../styles/template'
 
 const Liked: React.FC = () => {
   const [series, setSeries] = useState<SerieInfo[] | null>(null)
