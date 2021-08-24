@@ -7,26 +7,44 @@ import type { APISeriesResponse, Genre, SerieInfo } from '../models'
 import {
   Footer,
   Header,
-  InputWithIcon,
   Presentation,
   SerieCard,
   SerieSkeleton,
 } from '../components'
 import { useScroll } from '../hooks/useScroll'
+import { getPersistentStorage } from '../services/persistentStorage'
+
+const PERSIST_TAGS = 'tags'
+
+const includesAll = function <T>(arr: T[], values: T[]) {
+  return values.every(v => arr.includes(v))
+}
+
+const persistentStorage = getPersistentStorage()
 
 const Home: NextPage = () => {
   const [series, setSeries] = useState<{ [x: string]: SerieInfo[] }>({})
   const [genres, setGenres] = useState<Genre[]>([])
+  const [tags, setTags] = useState<Genre[]>([])
   const [loading, setLoading] = useState(false)
   const [currPage, setPage] = useState(1)
 
   const containerRef = useRef<any>(null)
-  const scroll = useScroll({ wait: 32 })
+  const scroll = useScroll({ wait: 64 })
+
+  useEffect(() => {
+    const persisted_tags = persistentStorage.getItem<Genre[]>(PERSIST_TAGS)
+
+    if (persisted_tags) setTags(persisted_tags)
+
+    axios.get('/api/genres').then(({ data }) => setGenres(data))
+    loadNextPage()
+  }, []) // eslint-disable-line
 
   const loadNextPage = useCallback(
     async function () {
       if (loading) return
-      if (!!series[currPage]) return
+      if (series[currPage]) return
 
       const { data } = await axios.get<APISeriesResponse>('/api/popularToday', {
         params: {
@@ -38,7 +56,7 @@ const Home: NextPage = () => {
       setPage(currPage + 1)
       setLoading(false)
     },
-    [series, currPage, loading]
+    [loading, series, currPage]
   )
 
   useEffect(() => {
@@ -49,17 +67,12 @@ const Home: NextPage = () => {
       const currentScroll = scroll.y
       const distanceToPageBottom = scrollHeight - currentScroll
 
-      if (distanceToPageBottom < 2500)
+      if (distanceToPageBottom < 1000)
         Promise.resolve(0)
           .then(() => setLoading(true))
           .then(loadNextPage)
     }
-  }, [scroll]) // eslint-disable-line
-
-  useEffect(() => {
-    axios.get('/api/genres').then(({ data }) => setGenres(data))
-    loadNextPage()
-  }, []) // eslint-disable-line
+  }, [scroll, tags, loading]) // eslint-disable-line
 
   return (
     <Container ref={containerRef} maxW='none' minH='100vh'>
@@ -70,14 +83,18 @@ const Home: NextPage = () => {
 
         {/* Content Wrapper */}
         <Box>
-          <Flex gridGap={4} align='center' my={4}>
-            <InputWithIcon placeholder='Digite o nome da serie' />
+          <Flex justify='flex-end' gridGap={4} align='center' my={4}>
             <Select
               isMulti
+              value={tags}
               options={genres}
               placeholder='Tags'
               hideSelectedOptions
               getOptionLabel={o => o.name}
+              onChange={val => {
+                setTags([...val])
+                persistentStorage.setItem(PERSIST_TAGS, val, 5)
+              }}
               getOptionValue={o => o.id.toString()}
               styles={{
                 container: provided => ({
@@ -88,9 +105,15 @@ const Home: NextPage = () => {
             />
             <Button minW={100}>Aplicar</Button>
           </Flex>
-          <Wrap spacing={8} mt={4}>
+          <Wrap minH={300} spacing={8} mt={4}>
             {Object.values(series)
               .flat()
+              .filter(i =>
+                includesAll(
+                  i.genre_ids,
+                  tags.map(t => t.id)
+                )
+              )
               .map(serie => (
                 <SerieCard
                   key={serie.id}
@@ -102,12 +125,11 @@ const Home: NextPage = () => {
                   })}
                 />
               ))}
-            {'s'
-              .repeat(20)
-              .split('')
-              .map((pre, i) => (
-                <SerieSkeleton key={`${pre}-${i}}`} />
-              ))}
+            {loading &&
+              's'
+                .repeat(20)
+                .split('')
+                .map((pre, i) => <SerieSkeleton key={`${pre}-${i}}`} />)}
           </Wrap>
         </Box>
       </Container>
