@@ -1,6 +1,7 @@
 import type {
   Episode,
   EpisodeRequest,
+  Genre,
   Season,
   SerieDetails,
 } from '../../models'
@@ -31,7 +32,6 @@ import {
   EpisodeSkeleton,
   SerieDetailSkeleton,
 } from '../../components'
-import NextLink from 'next/link'
 import { FiHeart } from 'react-icons/fi'
 import { FaHeart } from 'react-icons/fa'
 import {
@@ -43,8 +43,10 @@ import {
   unlikeSerie,
 } from '../../services/serie'
 import Template from '../../styles/template'
+import { persistentStorage } from '../../services/persistentStorage'
+import { storageKeys } from '../../constants/storageKeys'
 
-const Movie: NextPage = props => {
+const Movie: NextPage = () => {
   const route = useRouter()
   const [data, setData] = useState<SerieDetails | null>(null)
   const [isSerieLiked, setLiked] = useState(false)
@@ -99,6 +101,12 @@ const Movie: NextPage = props => {
     }
   }
 
+  const searchTag = (tag: Genre) => () => {
+    persistentStorage.setItem(storageKeys.TAGS, [tag], 5)
+
+    route.push('/')
+  }
+
   if (!data || ['error'].includes(data.status.toLowerCase()))
     return <SerieDetailSkeleton />
 
@@ -127,14 +135,14 @@ const Movie: NextPage = props => {
               <Text color='fontColor.600'>Tags</Text>
               <Text>
                 {data.genres.map(genre => (
-                  <NextLink href={`/?genres=${[genre.id]}`} key={genre.id}>
-                    <Tag
-                      _hover={{ cursor: 'pointer' }}
-                      mr={2}
-                      colorScheme='yellow'>
-                      {genre.name}
-                    </Tag>
-                  </NextLink>
+                  <Tag
+                    key={genre.id}
+                    onClick={searchTag(genre)}
+                    _hover={{ cursor: 'pointer' }}
+                    mr={2}
+                    colorScheme='yellow'>
+                    {genre.name}
+                  </Tag>
                 ))}
               </Text>
               <Text color='fontColor.600' mt={4}>

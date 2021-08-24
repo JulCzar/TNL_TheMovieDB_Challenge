@@ -23,11 +23,11 @@ const Header: React.FC = () => {
         <Container maxW='container.xl'>
           <Flex>
             <Heading mr={[2, 20]} color='yellow.400'>
-              <Link passHref href='/home'>
-                <Heading as='a'>
+              <Link passHref href='/'>
+                <Heading fontSize={['lg', '2xl']} as='a'>
                   myserielist
                   <Text color='white' as='span'>
-                    .vercel
+                    .vercel.com
                   </Text>
                 </Heading>
               </Link>

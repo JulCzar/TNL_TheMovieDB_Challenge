@@ -1,21 +1,16 @@
+import { storageKeys } from '../constants/storageKeys'
 import { Episode, SerieDetails } from '../models'
-import { getPersistentStorage } from './persistentStorage'
-
-const persistentStorage = getPersistentStorage()
-enum storeKey {
-  liked = 'liked',
-  watched = 'watched',
-}
+import { persistentStorage } from './persistentStorage'
 
 export const getLikedSeries = () =>
-  persistentStorage.getItem<SerieDetails[]>(storeKey.liked) || []
+  persistentStorage.getItem<SerieDetails[]>(storageKeys.LIKED) || []
 
 export const likeSerie = (serie: SerieDetails) => {
   const likedSeries = getLikedSeries()
 
   if (!likedSeries.map(l => l.id).includes(serie.id)) likedSeries.push(serie)
 
-  persistentStorage.setItem(storeKey.liked, likedSeries)
+  persistentStorage.setItem(storageKeys.LIKED, likedSeries)
 }
 
 export const unlikeSerie = (serie: SerieDetails) => {
@@ -23,7 +18,7 @@ export const unlikeSerie = (serie: SerieDetails) => {
 
   const filteredLikedSeries = likedSeries.filter(s => s.id !== serie.id)
 
-  persistentStorage.setItem(storeKey.liked, filteredLikedSeries)
+  persistentStorage.setItem(storageKeys.LIKED, filteredLikedSeries)
 }
 
 export const serieIsLiked = (serie: SerieDetails) => {
@@ -38,7 +33,8 @@ export const serieIsLiked = (serie: SerieDetails) => {
 }
 
 const getWatchedSeries = () =>
-  persistentStorage.getItem<{ [x: string]: number[] }>(storeKey.watched) || {}
+  persistentStorage.getItem<{ [x: string]: number[] }>(storageKeys.WATCHED) ||
+  {}
 
 export const markEpisodeAsWatched = (serie: SerieDetails, episode: Episode) => {
   const watchedSeries = getWatchedSeries()
@@ -50,7 +46,7 @@ export const markEpisodeAsWatched = (serie: SerieDetails, episode: Episode) => {
 
   watchedSeries[serie.id] = serieWatchedEpisodes
 
-  persistentStorage.setItem(storeKey.watched, watchedSeries)
+  persistentStorage.setItem(storageKeys.WATCHED, watchedSeries)
 }
 
 export const removeEpisodeFromWatchedList = (
@@ -67,7 +63,7 @@ export const removeEpisodeFromWatchedList = (
 
   watchedSeries[serie.id] = filteredSerieWatchedEpisodes
 
-  persistentStorage.setItem(storeKey.watched, watchedSeries)
+  persistentStorage.setItem(storageKeys.WATCHED, watchedSeries)
 }
 
 export const episodeIsWatched = (serie: SerieDetails, episode: Episode) => {

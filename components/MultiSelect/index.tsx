@@ -14,7 +14,9 @@ class MultiSelect<
         styles={{
           container: provided => ({
             ...provided,
-            minWidth: 300,
+            maxWidth: 450,
+            width: '100%',
+
             ':focus': {
               borderColor: '#fff9',
             },
