@@ -17,7 +17,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   } catch (e) {
     console.trace(e)
 
-    res.json({
+    res.status(400).json({
       status: 'Error',
     })
   }
