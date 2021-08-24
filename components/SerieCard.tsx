@@ -42,8 +42,8 @@ const SerieCard: React.FC<SerieCardProps> = ({ serie, genres }) => (
         backgroundSize='cover'
         backgroundPosition='bottom'
         backgroundRepeat='no-repeat'
-        backdropFilter='blur(10px) brightness(0.8)'
-        bgGradient='linear(to-b, transparent, #fff8)'>
+        backdropFilter='blur(10px) brightness(0.4)'
+        bgGradient='radial(transparent, #fff2)'>
         <Flex>
           <Text color='fontColor.500'>
             {serie.origin_country},{' '}

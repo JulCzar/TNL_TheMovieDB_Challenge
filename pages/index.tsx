@@ -1,20 +1,13 @@
-import { Box, Button, Container, Flex, Wrap } from '@chakra-ui/react'
-import Select from 'react-select'
+import { Box, Button, Flex, Wrap } from '@chakra-ui/react'
 import type { NextPage } from 'next'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import axios from 'axios'
 import type { APISeriesResponse, Genre, SerieInfo } from '../models'
-import {
-  Footer,
-  Header,
-  Presentation,
-  SerieCard,
-  SerieSkeleton,
-} from '../components'
+import { Presentation, SerieCard, SerieSkeleton } from '../components'
 import { useScroll } from '../hooks/useScroll'
 import { getPersistentStorage } from '../services/persistentStorage'
-import { colors } from '../constants/colors'
 import MultiSelect from '../components/MultiSelect'
+import Template from '../styles/template'
 
 const PERSIST_TAGS = 'tags'
 
@@ -77,66 +70,57 @@ const Home: NextPage = () => {
   }, [scroll, tags, loading]) // eslint-disable-line
 
   return (
-    <Container
-      bgColor={'background'}
-      ref={containerRef}
-      maxW='none'
-      minH='100vh'>
-      <Header />
-      {/* Content Container */}
-      <Container maxW='container.xl'>
-        <Presentation />
+    <Template containerRef={containerRef}>
+      <Presentation />
 
-        {/* Content Wrapper */}
-        <Box>
-          <Flex gridGap={4} align='center' my={4}>
-            <MultiSelect
-              isMulti
-              value={tags}
-              options={genres}
-              placeholder='Tags'
-              getOptionLabel={o => o.name}
-              getOptionValue={o => o.id.toString()}
-              onChange={val => {
-                setTags([...val])
-                persistentStorage.setItem(PERSIST_TAGS, val, 5)
-              }}
-            />
-            <Button fontSize='sm' colorScheme='yellow' minW={100}>
-              Aplicar
-            </Button>
-          </Flex>
-          <Wrap minH={300} spacing={8} mt={4}>
-            {Object.values(series)
-              .flat()
-              .filter(i =>
-                includesAll(
-                  i.genre_ids,
-                  tags.map(t => t.id)
-                )
+      {/* Content Wrapper */}
+      <Box>
+        <Flex gridGap={4} align='center' my={4}>
+          <MultiSelect
+            isMulti
+            value={tags}
+            options={genres}
+            instanceId='tags'
+            placeholder='Tags'
+            getOptionLabel={o => o.name}
+            getOptionValue={o => o.id.toString()}
+            onChange={val => {
+              setTags([...val])
+              persistentStorage.setItem(PERSIST_TAGS, val, 5)
+            }}
+          />
+          <Button fontSize='sm' colorScheme='yellow' minW={100}>
+            Aplicar
+          </Button>
+        </Flex>
+        <Wrap minH={300} spacing={8} mt={4}>
+          {Object.values(series)
+            .flat()
+            .filter(i =>
+              includesAll(
+                i.genre_ids,
+                tags.map(t => t.id)
               )
-              .map(serie => (
-                <SerieCard
-                  key={serie.id}
-                  serie={serie}
-                  genres={serie.genre_ids.map(id => {
-                    for (const genre of genres)
-                      if (genre.id === id) return genre.name
-                    return ''
-                  })}
-                />
-              ))}
-            {loading &&
-              's'
-                .repeat(20)
-                .split('')
-                .map((pre, i) => <SerieSkeleton key={`${pre}-${i}}`} />)}
-          </Wrap>
-        </Box>
-      </Container>
-
-      <Footer />
-    </Container>
+            )
+            .map(serie => (
+              <SerieCard
+                key={serie.id}
+                serie={serie}
+                genres={serie.genre_ids.map(id => {
+                  for (const genre of genres)
+                    if (genre.id === id) return genre.name
+                  return ''
+                })}
+              />
+            ))}
+          {loading &&
+            's'
+              .repeat(20)
+              .split('')
+              .map((pre, i) => <SerieSkeleton key={`${pre}-${i}}`} />)}
+        </Wrap>
+      </Box>
+    </Template>
   )
 }
 

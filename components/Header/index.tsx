@@ -22,17 +22,15 @@ const Header: React.FC = () => {
       <Flex py={[3, 10]} as='header'>
         <Container maxW='container.xl'>
           <Flex>
-            <Heading mr={[2, 20]}>
-              <Heading color='yellow.400'>
-                <Link passHref href='/'>
-                  <Heading as='a'>
-                    My Serie List
-                    <Text color='white' as='span'>
-                      .vercel
-                    </Text>
-                  </Heading>
-                </Link>
-              </Heading>
+            <Heading mr={[2, 20]} color='yellow.400'>
+              <Link passHref href='/'>
+                <Heading as='a'>
+                  My Serie List
+                  <Text color='white' as='span'>
+                    .vercel
+                  </Text>
+                </Heading>
+              </Link>
             </Heading>
             <Spacer />
             <Box ml={[2, 4]}>
