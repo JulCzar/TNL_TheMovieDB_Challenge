@@ -14,6 +14,7 @@ import {
 import { useScroll } from '../hooks/useScroll'
 import { getPersistentStorage } from '../services/persistentStorage'
 import { colors } from '../constants/colors'
+import MultiSelect from '../components/MultiSelect'
 
 const PERSIST_TAGS = 'tags'
 
@@ -89,23 +90,16 @@ const Home: NextPage = () => {
         {/* Content Wrapper */}
         <Box>
           <Flex gridGap={4} align='center' my={4}>
-            <Select
+            <MultiSelect
               isMulti
               value={tags}
               options={genres}
               placeholder='Tags'
-              hideSelectedOptions
               getOptionLabel={o => o.name}
+              getOptionValue={o => o.id.toString()}
               onChange={val => {
                 setTags([...val])
                 persistentStorage.setItem(PERSIST_TAGS, val, 5)
-              }}
-              getOptionValue={o => o.id.toString()}
-              styles={{
-                container: provided => ({
-                  ...provided,
-                  minWidth: 300,
-                }),
               }}
             />
             <Button fontSize='sm' colorScheme='yellow' minW={100}>
