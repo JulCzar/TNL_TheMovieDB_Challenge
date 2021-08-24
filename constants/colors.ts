@@ -1,0 +1,17 @@
+export enum colors {
+  background = '#0A0E1B',
+  backgroundSecondary = '#232B3C',
+  'font.400' = '#adadad',
+  'font.500' = '#cccccc',
+  'font.600' = '#fdfdfd',
+  'accent.50' = '#FEEAAE',
+  'accent.100' = '#FEE085',
+  'accent.200' = '#FED65D',
+  'accent.300' = '#FECB34',
+  'accent.400' = '#FEC001',
+  'accent.500' = '#DFA801',
+  'accent.600' = '#B78901',
+  'accent.700' = '#8E6B01',
+  'accent.800' = '#654C01',
+  'accent.900' = '#3D2E01',
+}

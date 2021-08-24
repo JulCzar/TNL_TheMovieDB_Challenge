@@ -13,6 +13,7 @@ import {
 } from '../components'
 import { useScroll } from '../hooks/useScroll'
 import { getPersistentStorage } from '../services/persistentStorage'
+import { colors } from '../constants/colors'
 
 const PERSIST_TAGS = 'tags'
 
@@ -75,7 +76,11 @@ const Home: NextPage = () => {
   }, [scroll, tags, loading]) // eslint-disable-line
 
   return (
-    <Container ref={containerRef} maxW='none' minH='100vh'>
+    <Container
+      bgColor={'background'}
+      ref={containerRef}
+      maxW='none'
+      minH='100vh'>
       <Header />
       {/* Content Container */}
       <Container maxW='container.xl'>
@@ -83,7 +88,7 @@ const Home: NextPage = () => {
 
         {/* Content Wrapper */}
         <Box>
-          <Flex justify='flex-end' gridGap={4} align='center' my={4}>
+          <Flex gridGap={4} align='center' my={4}>
             <Select
               isMulti
               value={tags}
@@ -103,7 +108,9 @@ const Home: NextPage = () => {
                 }),
               }}
             />
-            <Button minW={100}>Aplicar</Button>
+            <Button fontSize='sm' colorScheme='yellow' minW={100}>
+              Aplicar
+            </Button>
           </Flex>
           <Wrap minH={300} spacing={8} mt={4}>
             {Object.values(series)

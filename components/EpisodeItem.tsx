@@ -10,10 +10,12 @@ const EpisodeItem: React.FC<EpisodeItemProps> = ({ episode, ...rest }) => {
   return (
     <Box py={4} borderTopWidth='1px' borderTopColor='#0003'>
       <Checkbox {...rest} spacing={7}>
-        <Text>
+        <Text color='fontColor.500'>
           {episode.episode_number} - {episode.name}
         </Text>
-        <Text noOfLines={1}>{episode.overview}</Text>
+        <Text color='fontColor.500' noOfLines={1}>
+          {episode.overview}
+        </Text>
       </Checkbox>
     </Box>
   )

@@ -105,7 +105,7 @@ const Movie: NextPage = props => {
     return <SerieDetailSkeleton />
 
   return (
-    <Container maxW='none'>
+    <Container bgColor={'background'} maxW='none'>
       <Header />
       <Container maxW='container.xl'>
         <Box
@@ -123,12 +123,12 @@ const Movie: NextPage = props => {
                 src={`https://www.themoviedb.org/t/p/w300_and_h450_bestv2${data.poster_path}`}
               />
               <Flex direction='column' p={6} w='6xl' minW='md'>
-                <Heading fontSize='4xl'>
+                <Heading color='fontColor.600' fontSize='4xl'>
                   {data.name} ({new Date(data.first_air_date).getFullYear()})
                 </Heading>
-                <Text>{data.tagline}</Text>
+                <Text color='fontColor.400'>{data.tagline}</Text>
                 <Divider my={6} />
-                <Text>Tags</Text>
+                <Text color='fontColor.600'>Tags</Text>
                 <Text>
                   {data.genres.map(genre => (
                     <NextLink href={`/?genres=${[genre.id]}`} key={genre.id}>
@@ -141,8 +141,12 @@ const Movie: NextPage = props => {
                     </NextLink>
                   ))}
                 </Text>
-                <Text mt={4}>Sinopse</Text>
-                <Text textAlign='justify'>{data.overview || 'Não  há'}</Text>
+                <Text color='fontColor.600' mt={4}>
+                  Sinopse
+                </Text>
+                <Text color='fontColor.400' textAlign='justify'>
+                  {data.overview || 'Não  há'}
+                </Text>
                 <Spacer />
                 <Box>
                   <IconButton
@@ -163,14 +167,14 @@ const Movie: NextPage = props => {
           </Box>
         </Box>
         <Box>
-          <Heading mt={10} mb={4} fontSize='2xl'>
+          <Heading color='fontColor.600' mt={10} mb={4} fontSize='2xl'>
             Temporadas
           </Heading>
           <Accordion allowMultiple>
             {data.seasons.map(season => (
               <AccordionItem key={season.id}>
                 <AccordionButton onClick={() => loadSeasonEpisodes(season)}>
-                  <Box flex='1' textAlign='left'>
+                  <Box color='fontColor.500' flex='1' textAlign='left'>
                     {season.name} - {season.episode_count} episodes
                   </Box>
                   <AccordionIcon />
