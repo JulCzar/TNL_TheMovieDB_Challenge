@@ -2,6 +2,7 @@ import {
   AccordionButton,
   AccordionButtonProps,
   AccordionItem,
+  AccordionPanel,
   ResponsiveValue,
   Text,
 } from '@chakra-ui/react'
@@ -17,6 +18,7 @@ const ListItem: React.FC<ListItemProps> = ({
   title,
   icon,
   spacing,
+  children,
   ...rest
 }) => {
   return (
@@ -25,6 +27,7 @@ const ListItem: React.FC<ListItemProps> = ({
         {icon}
         <Text ml={spacing}>{title}</Text>
       </AccordionButton>
+      {children && <AccordionPanel>{children}</AccordionPanel>}
     </AccordionItem>
   )
 }
