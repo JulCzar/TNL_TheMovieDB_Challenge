@@ -203,7 +203,7 @@ const Movie: NextPage = () => {
                 <Box color='fontColor.500' flex='1' textAlign='left'>
                   {season.name} - {season.episode_count} episodes
                 </Box>
-                <AccordionIcon />
+                <AccordionIcon color='fontColor.500' />
               </AccordionButton>
               <AccordionPanel>
                 {!seasons[season.id]
