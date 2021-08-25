@@ -24,7 +24,7 @@ const Header: React.FC = () => {
           <Flex>
             <Heading mr={[2, 20]} color='yellow.400'>
               <Link passHref href='/'>
-                <Heading fontSize={['lg', '2xl']} as='a'>
+                <Heading fontSize={['md', 'lg', '2xl']} as='a'>
                   myserielist
                   <Text color='white' as='span'>
                     .vercel.com

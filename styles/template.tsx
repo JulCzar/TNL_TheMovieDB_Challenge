@@ -17,10 +17,13 @@ const Template: React.FC<TemplateProps> = ({
       ref={containerRef}
       bgColor={'background'}
       maxW='none'
-      minH='100vh'>
+      minH='100vh'
+      p={[0, 0, 2, 4, 6, 8]}>
       <Header />
       {/* Content Container */}
-      <Container maxW='container.xl'>{children}</Container>
+      <Container maxW='container.xl' p={[1, 2, 4, 6]}>
+        {children}
+      </Container>
 
       <Footer />
     </Container>

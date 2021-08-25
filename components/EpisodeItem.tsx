@@ -8,7 +8,7 @@ interface EpisodeItemProps extends CheckboxProps {
 
 const EpisodeItem: React.FC<EpisodeItemProps> = ({ episode, ...rest }) => {
   return (
-    <Box py={4} borderTopWidth='1px' borderTopColor='#0003'>
+    <Box py={4} borderTopWidth='1px' borderTopColor='#fff8'>
       <Checkbox {...rest} spacing={7}>
         <Text color='fontColor.500'>
           {episode.episode_number} - {episode.name}

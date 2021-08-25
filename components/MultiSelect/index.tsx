@@ -12,15 +12,15 @@ class MultiSelect<
         {...this.props}
         hideSelectedOptions
         styles={{
-          container: provided => ({
-            ...provided,
-            maxWidth: 450,
-            width: '100%',
-
-            ':focus': {
-              borderColor: '#fff9',
-            },
-          }),
+          container: provided => {
+            return {
+              ...provided,
+              width: '100%',
+              ':focus': {
+                borderColor: '#fff9',
+              },
+            }
+          },
           control: provided => ({
             ...provided,
             background: '#1C202F',

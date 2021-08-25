@@ -15,12 +15,14 @@ import {
   Box,
   Divider,
   Flex,
+  Grid,
   Heading,
   IconButton,
   Image,
   Spacer,
   Tag,
   Text,
+  useToast,
 } from '@chakra-ui/react'
 import axios from 'axios'
 import { NextPage } from 'next'
@@ -47,10 +49,12 @@ import { persistentStorage } from '../../services/persistentStorage'
 import { storageKeys } from '../../constants/storageKeys'
 
 const Movie: NextPage = () => {
-  const route = useRouter()
+  const [seasons, setSeason] = useState<{ [x: string]: Episode[] }>({})
   const [data, setData] = useState<SerieDetails | null>(null)
   const [isSerieLiked, setLiked] = useState(false)
-  const [seasons, setSeason] = useState<{ [x: string]: Episode[] }>({})
+  const toast = useToast()
+
+  const route = useRouter()
   const { id } = route.query
 
   useEffect(() => {
@@ -59,7 +63,13 @@ const Movie: NextPage = () => {
     axios
       .get<SerieDetails>(`/api/serie/${id}`)
       .then(({ data }) => setData(data))
-  }, [id])
+      .catch(() =>
+        toast({
+          title: 'Não foi possível carregar a serie',
+          status: 'warning',
+        })
+      )
+  }, [id]) // eslint-disable-line
 
   useEffect(() => {
     if (!data) return
@@ -77,6 +87,7 @@ const Movie: NextPage = () => {
       .then(({ data }) => {
         setSeason({ ...seasons, [season.id]: data.episodes })
       })
+      .catch(console.warn)
   }
 
   function toggleLikedSerie() {
@@ -113,38 +124,49 @@ const Movie: NextPage = () => {
   return (
     <Template>
       <Box
-        borderRadius='md'
+        p={0}
         overflow='hidden'
+        borderRadius='md'
         backgroundSize='cover'
         backgroundRepeat='no-repeat'
         backgroundImage={`https://www.themoviedb.org/t/p/w1920_and_h800_multi_faces${data.backdrop_path}`}>
-        <Box p={6} background='#0008' backdropFilter='blur(10px)'>
-          <Flex>
+        <Box
+          p={[0, 0, 1, 2, 4, 6]}
+          background='#0008'
+          backdropFilter='blur(10px)'>
+          <Flex wrap='wrap' justify={['center', 'auto']}>
             <Image
               alt=''
+              w='100%'
+              maxW='300px'
               loading='lazy'
               borderRadius='md'
+              boxSize={['auto']}
               src={`https://www.themoviedb.org/t/p/w300_and_h450_bestv2${data.poster_path}`}
             />
-            <Flex direction='column' p={6} w='6xl' minW='md'>
+            <Flex direction='column' p={[1, 2, 4, 6]} w={['100%', '3xl']}>
               <Heading color='fontColor.600' fontSize='4xl'>
                 {data.name} ({new Date(data.first_air_date).getFullYear()})
               </Heading>
               <Text color='fontColor.400'>{data.tagline}</Text>
               <Divider my={6} />
               <Text color='fontColor.600'>Tags</Text>
-              <Text>
+              <Flex wrap='wrap' gridGap={1}>
+                {!data.genres.length && (
+                  <Text color='fontColor.400' textAlign='justify'>
+                    Não há
+                  </Text>
+                )}
                 {data.genres.map(genre => (
                   <Tag
                     key={genre.id}
                     onClick={searchTag(genre)}
                     _hover={{ cursor: 'pointer' }}
-                    mr={2}
                     colorScheme='yellow'>
                     {genre.name}
                   </Tag>
                 ))}
-              </Text>
+              </Flex>
               <Text color='fontColor.600' mt={4}>
                 Sinopse
               </Text>

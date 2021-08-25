@@ -87,9 +87,10 @@ const Home: NextPage = () => {
     if (containerRef.current instanceof Element) {
       const { scrollHeight } = containerRef.current
       const currentScroll = scroll.y
-      const distanceToPageBottom = scrollHeight - currentScroll
+      const screenHeight = window.outerHeight
+      const distanceToPageBottom = scrollHeight - (currentScroll + screenHeight)
 
-      if (distanceToPageBottom < 1000)
+      if (distanceToPageBottom < 2000)
         Promise.resolve(0)
           .then(() => setLoading(true))
           .then(loadNextPage)
@@ -104,32 +105,35 @@ const Home: NextPage = () => {
       {/* Content Wrapper */}
       <Box>
         <Flex gridGap={4} align='center' my={4}>
-          <MultiSelect
-            isMulti
-            value={tags}
-            options={genres}
-            instanceId='tags'
-            placeholder='Tags'
-            getOptionLabel={o => o.name}
-            getOptionValue={o => o.id.toString()}
-            onChange={tags => setTags([...tags])}
-          />
+          <Box w={['100%', '100%', '100%', '100%', 'md']}>
+            <MultiSelect
+              isMulti
+              value={tags}
+              options={genres}
+              instanceId='tags'
+              placeholder='Tags'
+              getOptionLabel={o => o.name}
+              getOptionValue={o => o.id.toString()}
+              onChange={tags => setTags([...tags])}
+            />
+          </Box>
         </Flex>
         <InfinityGrid
-          loading={loading}
-          skeletonCount={6}
+          skeletonCount={10}
           Skeleton={SerieSkeleton}
           items={getSeriesFiltered()}
           render={serie => (
-            <SerieCard
-              key={serie.id}
-              serie={serie}
-              genres={serie.genre_ids.map(id => {
-                for (const genre of genres)
-                  if (genre.id === id) return genre.name
-                return ''
-              })}
-            />
+            <Flex justify='center'>
+              <SerieCard
+                key={serie.id}
+                serie={serie}
+                genres={serie.genre_ids.map(id => {
+                  for (const genre of genres)
+                    if (genre.id === id) return genre.name
+                  return ''
+                })}
+              />
+            </Flex>
           )}
         />
       </Box>

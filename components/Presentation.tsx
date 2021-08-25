@@ -14,7 +14,7 @@ const Presentation: React.FC = () => {
         !
       </Heading>
       <Spacer />
-      <VStack spacing={4} w='md'>
+      <VStack spacing={4} w={['100%', '100%', '100%', '100%', 'md']}>
         <Text color='fontColor.400' fontSize={['sm', 'md']} textAlign='justify'>
           My Serie List é um serviço que utiliza a api do{' '}
           <Link href='https://www.themoviedb.org/'>The Movie DB</Link> para
