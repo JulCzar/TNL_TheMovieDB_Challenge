@@ -1,29 +1,19 @@
-import { Box, Button, Container, Flex, Wrap } from '@chakra-ui/react'
-import Select from 'react-select'
+import { Box, Flex } from '@chakra-ui/react'
+import axios from 'axios'
 import type { NextPage } from 'next'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import axios from 'axios'
-import type { APISeriesResponse, Genre, SerieInfo } from '../models'
-import {
-  Footer,
-  Header,
-  Presentation,
-  SerieCard,
-  SerieSkeleton,
-} from '../components'
+
+import { Presentation, SerieCard, SerieSkeleton } from '../components'
+import InfinityGrid from '../components/InfinityGrid'
+import MultiSelect from '../components/MultiSelect'
+import { storageKeys } from '../constants/storageKeys'
 import { useScroll } from '../hooks/useScroll'
-import { getPersistentStorage } from '../services/persistentStorage'
-
-const PERSIST_TAGS = 'tags'
-
-const includesAll = function <T>(arr: T[], values: T[]) {
-  return values.every(v => arr.includes(v))
-}
-
-const persistentStorage = getPersistentStorage()
+import type { APISeriesResponse, Genre, SerieListPaginated } from '../models'
+import { persistentStorage } from '../services/persistentStorage'
+import Template from '../styles/template'
 
 const Home: NextPage = () => {
-  const [series, setSeries] = useState<{ [x: string]: SerieInfo[] }>({})
+  const [series, setSeries] = useState<SerieListPaginated>({})
   const [genres, setGenres] = useState<Genre[]>([])
   const [tags, setTags] = useState<Genre[]>([])
   const [loading, setLoading] = useState(false)
@@ -32,32 +22,64 @@ const Home: NextPage = () => {
   const containerRef = useRef<any>(null)
   const scroll = useScroll({ wait: 64 })
 
-  useEffect(() => {
-    const persisted_tags = persistentStorage.getItem<Genre[]>(PERSIST_TAGS)
-
-    if (persisted_tags) setTags(persisted_tags)
-
-    axios.get('/api/genres').then(({ data }) => setGenres(data))
-    loadNextPage()
-  }, []) // eslint-disable-line
-
   const loadNextPage = useCallback(
     async function () {
       if (loading) return
-      if (series[currPage]) return
+      if (series[currPage]) return setPage(currPage + 1)
 
       const { data } = await axios.get<APISeriesResponse>('/api/popularToday', {
         params: {
           page: currPage,
         },
       })
-
-      setSeries({ ...series, [currPage]: data.results })
+      const serieListPaginated: SerieListPaginated = {
+        ...series,
+        [currPage]: data.results,
+      }
+      setSeries(serieListPaginated)
       setPage(currPage + 1)
       setLoading(false)
     },
     [loading, series, currPage]
   )
+
+  const getSeriesFiltered = useCallback(
+    () =>
+      Object.values(series)
+        .flat()
+        .filter(s => tags.map(t => t.id).every(v => s.genre_ids.includes(v))),
+    [series, tags]
+  )
+
+  useEffect(() => {
+    axios.get('/api/genres').then(({ data }) => setGenres(data))
+
+    const tags = persistentStorage.getItem<Genre[]>(storageKeys.TAGS) || []
+    const currPage =
+      persistentStorage.getItem<number>(storageKeys.CURRENT_PAGE) || 1
+    const series = persistentStorage.getItem<SerieListPaginated>(
+      storageKeys.SERIES
+    )
+
+    if (!series) {
+      loadNextPage()
+      return
+    } else {
+      setSeries(series)
+      setPage(currPage)
+    }
+
+    setTags(tags)
+  }, []) // eslint-disable-line
+
+  useEffect(() => {
+    persistentStorage.setItem(storageKeys.SERIES, series, 5)
+    persistentStorage.setItem(storageKeys.CURRENT_PAGE, currPage, 5)
+  }, [series, currPage])
+
+  useEffect(() => {
+    persistentStorage.setItem(storageKeys.TAGS, tags, 5)
+  }, [tags])
 
   useEffect(() => {
     if (!containerRef.current || !scroll.y) return
@@ -65,77 +87,57 @@ const Home: NextPage = () => {
     if (containerRef.current instanceof Element) {
       const { scrollHeight } = containerRef.current
       const currentScroll = scroll.y
-      const distanceToPageBottom = scrollHeight - currentScroll
+      const screenHeight = window.outerHeight
+      const distanceToPageBottom = scrollHeight - (currentScroll + screenHeight)
 
-      if (distanceToPageBottom < 1000)
+      if (distanceToPageBottom < 2000)
         Promise.resolve(0)
           .then(() => setLoading(true))
           .then(loadNextPage)
+          .finally(() => setLoading(false))
     }
-  }, [scroll, tags, loading]) // eslint-disable-line
+  }, [scroll]) // eslint-disable-line
 
   return (
-    <Container ref={containerRef} maxW='none' minH='100vh'>
-      <Header />
-      {/* Content Container */}
-      <Container maxW='container.xl'>
-        <Presentation />
+    <Template containerRef={containerRef}>
+      <Presentation />
 
-        {/* Content Wrapper */}
-        <Box>
-          <Flex justify='flex-end' gridGap={4} align='center' my={4}>
-            <Select
+      {/* Content Wrapper */}
+      <Box>
+        <Flex gridGap={4} align='center' my={4}>
+          <Box w={['100%', '100%', '100%', '100%', 'md']}>
+            <MultiSelect
               isMulti
               value={tags}
               options={genres}
+              instanceId='tags'
               placeholder='Tags'
-              hideSelectedOptions
               getOptionLabel={o => o.name}
-              onChange={val => {
-                setTags([...val])
-                persistentStorage.setItem(PERSIST_TAGS, val, 5)
-              }}
               getOptionValue={o => o.id.toString()}
-              styles={{
-                container: provided => ({
-                  ...provided,
-                  minWidth: 300,
-                }),
-              }}
+              onChange={tags => setTags([...tags])}
             />
-            <Button minW={100}>Aplicar</Button>
-          </Flex>
-          <Wrap minH={300} spacing={8} mt={4}>
-            {Object.values(series)
-              .flat()
-              .filter(i =>
-                includesAll(
-                  i.genre_ids,
-                  tags.map(t => t.id)
-                )
-              )
-              .map(serie => (
-                <SerieCard
-                  key={serie.id}
-                  serie={serie}
-                  genres={serie.genre_ids.map(id => {
-                    for (const genre of genres)
-                      if (genre.id === id) return genre.name
-                    return ''
-                  })}
-                />
-              ))}
-            {loading &&
-              's'
-                .repeat(20)
-                .split('')
-                .map((pre, i) => <SerieSkeleton key={`${pre}-${i}}`} />)}
-          </Wrap>
-        </Box>
-      </Container>
-
-      <Footer />
-    </Container>
+          </Box>
+        </Flex>
+        <InfinityGrid
+          skeletonCount={10}
+          Skeleton={SerieSkeleton}
+          items={getSeriesFiltered()}
+          render={serie => (
+            <Flex justify='center'>
+              <SerieCard
+                key={serie.id}
+                serie={serie}
+                genres={serie.genre_ids.map(id => {
+                  for (const genre of genres)
+                    if (genre.id === id) return genre.name
+                  return ''
+                })}
+              />
+            </Flex>
+          )}
+        />
+      </Box>
+    </Template>
   )
 }
 

@@ -6,7 +6,7 @@ import React from 'react'
 const Presentation: React.FC = () => {
   return (
     <Flex wrap='wrap'>
-      <Heading fontSize={['3xl', '6xl']} w='lg'>
+      <Heading color='fontColor.600' fontSize={['3xl', '6xl']} w='lg'>
         Seja Bem Vindo ao{' '}
         <Text as='span' color='yellow.400'>
           My Serie List
@@ -14,8 +14,8 @@ const Presentation: React.FC = () => {
         !
       </Heading>
       <Spacer />
-      <VStack spacing={4} w='md'>
-        <Text fontSize={['sm', 'md']} textAlign='justify'>
+      <VStack spacing={4} w={['100%', '100%', '100%', '100%', 'md']}>
+        <Text color='fontColor.400' fontSize={['sm', 'md']} textAlign='justify'>
           My Serie List é um serviço que utiliza a api do{' '}
           <Link href='https://www.themoviedb.org/'>The Movie DB</Link> para
           listar os seriados mais populares e manter o controle sobre os

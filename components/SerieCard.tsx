@@ -42,23 +42,32 @@ const SerieCard: React.FC<SerieCardProps> = ({ serie, genres }) => (
         backgroundSize='cover'
         backgroundPosition='bottom'
         backgroundRepeat='no-repeat'
-        backdropFilter='blur(10px) brightness(0.8)'
-        bgGradient='linear(to-b, transparent, #fff8)'>
+        backdropFilter='blur(10px) brightness(0.4)'
+        bgGradient='radial(transparent, #fff2)'>
         <Flex>
-          <Text>
+          <Text color='fontColor.500'>
             {serie.origin_country},{' '}
             <Text as='span' fontWeight='bold' color='yellow.400'>
               {new Date(serie.first_air_date).getFullYear()}
             </Text>
           </Text>
         </Flex>
-        <Text fontSize='xl' fontWeight='900' noOfLines={1}>
+        <Text
+          color='fontColor.600'
+          fontSize='xl'
+          fontWeight='extrabold'
+          noOfLines={1}>
           {serie.name}
         </Text>
-        <Flex>
+        <Flex color='fontColor.500'>
           <GiTomato color='#e30c0d' size={20} /> {serie.vote_average * 10}%
         </Flex>
-        <Box overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>
+        <Box
+          color='fontColor.400'
+          overflow='hidden'
+          fontSize='smaller'
+          textOverflow='ellipsis'
+          whiteSpace='nowrap'>
           {genres.filter(i => i !== '').join(', ')}
         </Box>
       </Box>

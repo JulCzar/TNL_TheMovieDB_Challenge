@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
   return (
     <Flex as='footer' borderTopWidth='1px' borderTopColor='#0003' mt={6}>
       <Container maxW='container.xl' p={10}>
-        <Heading fontSize='xl'>
+        <Heading color='fontColor.500' fontSize='xl'>
           Um site desenvolvido por{' '}
           <Link href='https://github.com/JulCzar'>JulCzar</Link>
         </Heading>

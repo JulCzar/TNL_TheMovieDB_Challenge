@@ -113,3 +113,5 @@ export function getPersistentStorage(config?: Config) {
 
   return _init()
 }
+
+export const persistentStorage = getPersistentStorage()

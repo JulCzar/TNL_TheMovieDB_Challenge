@@ -5,11 +5,13 @@ import {
   Flex,
   Heading,
   Spacer,
+  Text,
   useDisclosure,
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import React from 'react'
 import { FiMenu } from 'react-icons/fi'
+import { colors } from '../../constants/colors'
 import Drawer from './widgets/Drawer'
 
 const Header: React.FC = () => {
@@ -20,12 +22,32 @@ const Header: React.FC = () => {
       <Flex py={[3, 10]} as='header'>
         <Container maxW='container.xl'>
           <Flex>
-            <Heading mr={[2, 20]}>
-              <Link href='/'>My Serie List</Link>
+            <Heading mr={[2, 20]} color='yellow.400'>
+              <Link passHref href='/'>
+                <Heading fontSize={['md', 'lg', '2xl']} as='a'>
+                  myserielist
+                  <Text color='white' as='span'>
+                    .vercel.com
+                  </Text>
+                </Heading>
+              </Link>
             </Heading>
             <Spacer />
             <Box ml={[2, 4]}>
-              <Button colorScheme='teal' onClick={onOpen}>
+              <Button
+                bgColor={colors.backgroundSecondary}
+                _hover={{
+                  backgroundColor: colors.backgroundSecondary,
+                  filter: 'brightness(0.8)',
+                  transition: '300ms',
+                }}
+                _active={{
+                  backgroundColor: colors.backgroundSecondary,
+                  filter: 'brightness(0.6)',
+                  transition: '300ms',
+                }}
+                colorScheme='teal'
+                onClick={onOpen}>
                 <FiMenu />
               </Button>
             </Box>

@@ -3,6 +3,10 @@ export interface Genre {
   name: string
 }
 
+export type SerieListPaginated = {
+  [x: string]: SerieInfo[]
+}
+
 export interface SerieInfo {
   backdrop_path: string
   first_air_date: string
