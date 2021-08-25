@@ -1,3 +1,6 @@
+// Baseado na solução disponível em: https://github.com/chakra-ui/chakra-ui/issues/457
+// Modificado para funcionando independente do react-hook-form
+
 import {
   FormControl,
   FormHelperText,
