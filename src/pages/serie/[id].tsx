@@ -4,7 +4,7 @@ import type {
   Genre,
   Season,
   SerieDetails,
-} from '../../models'
+} from '../../models';
 
 import {
   Accordion,
@@ -23,19 +23,20 @@ import {
   Tag,
   Text,
   useToast,
-} from '@chakra-ui/react'
-import axios from 'axios'
-import { NextPage } from 'next'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+} from '@chakra-ui/react';
+import axios from 'axios';
+import { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { Duration } from 'persistor-node';
 
 import {
   EpisodeItem,
   EpisodeSkeleton,
   SerieDetailSkeleton,
-} from '../../components'
-import { FiHeart } from 'react-icons/fi'
-import { FaHeart } from 'react-icons/fa'
+} from '../../components';
+import { FiHeart } from 'react-icons/fi';
+import { FaHeart } from 'react-icons/fa';
 import {
   episodeIsWatched,
   likeSerie,
@@ -43,22 +44,22 @@ import {
   removeEpisodeFromWatchedList,
   serieIsLiked,
   unlikeSerie,
-} from '../../services/serie'
-import Template from '../../styles/template'
-import { persistentStorage } from '../../services/persistentStorage'
-import { storageKeys } from '../../constants/storageKeys'
+} from '../../services/serie';
+import Template from '../../styles/template';
+import { persistentStorage } from '../../services/persistentStorage';
+import { storageKeys } from '../../constants/storageKeys';
 
 const Movie: NextPage = () => {
-  const [seasons, setSeason] = useState<{ [x: string]: Episode[] }>({})
-  const [data, setData] = useState<SerieDetails | null>(null)
-  const [isSerieLiked, setLiked] = useState(false)
-  const toast = useToast()
+  const [seasons, setSeason] = useState<{ [x: string]: Episode[] }>({});
+  const [data, setData] = useState<SerieDetails | null>(null);
+  const [isSerieLiked, setLiked] = useState(false);
+  const toast = useToast();
 
-  const route = useRouter()
-  const { id } = route.query
+  const route = useRouter();
+  const { id } = route.query;
 
   useEffect(() => {
-    if (!id) return
+    if (!id) return;
 
     axios
       .get<SerieDetails>(`/api/serie/${id}`)
@@ -68,58 +69,60 @@ const Movie: NextPage = () => {
           title: 'Não foi possível carregar a serie',
           status: 'warning',
         })
-      )
-  }, [id]) // eslint-disable-line
+      );
+  }, [id]); // eslint-disable-line
 
   useEffect(() => {
-    if (!data) return
+    if (!data) return;
 
-    const isSerieLiked = serieIsLiked(data)
+    const isSerieLiked = serieIsLiked(data);
 
-    setLiked(isSerieLiked)
-  }, [data])
+    setLiked(isSerieLiked);
+  }, [data]);
 
   async function loadSeasonEpisodes(season: Season) {
-    if (!!seasons[season.id]) return
+    if (!!seasons[season.id]) return;
 
     axios
       .get<EpisodeRequest>(`/api/serie/${id}/episodes/${season.season_number}`)
       .then(({ data }) => {
-        setSeason({ ...seasons, [season.id]: data.episodes })
+        setSeason({ ...seasons, [season.id]: data.episodes });
       })
-      .catch(console.warn)
+      .catch(console.warn);
   }
 
   function toggleLikedSerie() {
-    if (!data) return
+    if (!data) return;
 
     if (serieIsLiked(data)) {
-      unlikeSerie(data)
-      setLiked(false)
+      unlikeSerie(data);
+      setLiked(false);
     } else {
-      likeSerie(data)
-      setLiked(true)
+      likeSerie(data);
+      setLiked(true);
     }
   }
 
   function toggleEpisodeWatched(episode: Episode) {
     return () => {
-      if (!data) return
+      if (!data) return;
 
       if (episodeIsWatched(data, episode))
-        removeEpisodeFromWatchedList(data, episode)
-      else markEpisodeAsWatched(data, episode)
-    }
+        removeEpisodeFromWatchedList(data, episode);
+      else markEpisodeAsWatched(data, episode);
+    };
   }
 
   const searchTag = (tag: Genre) => () => {
-    persistentStorage.setItem(storageKeys.TAGS, [tag], 5)
+    persistentStorage.setItem(storageKeys.TAGS, [tag], {
+      expireIn: new Duration({ minutes: 5 }),
+    });
 
-    route.push('/')
-  }
+    route.push('/');
+  };
 
   if (!data || ['error'].includes(data.status.toLowerCase()))
-    return <SerieDetailSkeleton />
+    return <SerieDetailSkeleton />;
 
   return (
     <Template>
@@ -228,7 +231,7 @@ const Movie: NextPage = () => {
         </Accordion>
       </Box>
     </Template>
-  )
-}
+  );
+};
 
-export default Movie
+export default Movie;

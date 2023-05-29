@@ -22,7 +22,7 @@ export const exportUserData = () => {
   const liked =
     persistentStorage.getItem<SerieDetails[]>(storageKeys.LIKED) || []
   const watched =
-    persistentStorage.getItem<{ [x: number]: number[] }>(storageKeys.WATCHED) ||
+    persistentStorage.getItem<Record<number, number[]>>(storageKeys.WATCHED) ||
     {}
 
   const userData = { liked, watched }
